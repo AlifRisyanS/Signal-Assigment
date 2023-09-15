@@ -1,60 +1,43 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep 15 11:55:11 2023
-
-@author: LENOVO
-"""
-
-#!/bin/python
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import matplotlib.pyplot as plt
 
-def myFFT(v):
-    n = len(v)
+# Fungsi untuk melakukan FFT filtering
+def fft_filter(signal, cutoff_freq):
+    # Lakukan FFT
+    fft_result = np.fft.fft(signal)
     
-    if n==1:
-        return v
-    else:
-        # implement some recursive
-        F_even = myFFT(v[::2])
-        F_odd = myFFT(v[1::2])
-        
-        # frequency factor
-        fac = np.exp(-2j*np.pi*np.arange(n)/n)
-        
-        # build FFT array
-        F = np.concatenate([
-            F_even + fac[:int(n/2)]*F_odd,
-            F_even + fac[int(n/2):]*F_odd
-            ])
-        
-        return F
+    # Frekuensi yang sesuai dengan setiap titik FFT
+    freqs = np.fft.fftfreq(len(signal))
+    
+    # Buat filter dengan cutoff frequency
+    filter = np.ones_like(signal)
+    filter[np.abs(freqs) > cutoff_freq] = 0
+    
+    # Terapkan filter pada FFT
+    filtered_fft = fft_result * filter
+    
+    # Lakukan invers FFT untuk mendapatkan sinyal yang difilter
+    filtered_signal = np.fft.ifft(filtered_fft)
+    
+    return filtered_signal
 
-# ID
-print("Nama: Alif Risyan S")
-print("NRP: 5009201071")
+# Membuat sinyal contoh (misalnya, sinyal sinus)
+t = np.linspace(0, 1, 1000, endpoint=False)  # Waktu
+signal = np.sin(2 * np.pi * 5 * t) + 0.5 * np.sin(2 * np.pi * 20 * t)  # Sinyal gabungan
 
-# X array linear spacing
-X = np.arange(0,1,1.0/128)
+# Menentukan cutoff frequency untuk filtering
+cutoff_frequency = 15  # Frekuensi cutoff dalam Hz
 
-# Y sinus function
-Y = np.sin(2*np.pi*X)
+# Melakukan filtering pada sinyal
+filtered_signal = fft_filter(signal, cutoff_frequency)
 
-# create noise array at X length
-R = np.random.rand(len(X))
-
-# add noise to sine result
-Yr = Y + R
-
-# FFT all
-FY = np.abs(myFFT(Y))
-FYr = np.abs(myFFT(Yr))
-
-# plot all
-fig, ax = plt.subplots(2,2)
-ax[0,0].plot(X,Y)
-ax[0,1].plot(FY)
-ax[1,0].plot(X,Yr)
-ax[1,1].plot(FYr)
+# Plot sinyal asli dan yang difilter
+plt.figure(figsize=(10, 6))
+plt.subplot(2, 1, 1)
+plt.plot(t, signal)
+plt.title('Sinyal Asli')
+plt.subplot(2, 1, 2)
+plt.plot(t, filtered_signal)
+plt.title('Sinyal yang Difilter (Cutoff Frequency = {} Hz)'.format(cutoff_frequency))
+plt.tight_layout()
+plt.show()
