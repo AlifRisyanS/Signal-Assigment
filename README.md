@@ -6,6 +6,8 @@ Tugas diawali dengan membuat akun GitHub, lalu membuat repository. Link reposito
 
 ## B. FFT signal
 Dua sinyal sinus di filtering menggunakan FFT. 
+
 ![Sinyal FFT](https://github.com/AlifRisyanS/Signal-Assigment/assets/145091349/911ebf09-beed-4871-a71f-69901f34bf0d)
 
-
+## C. Last Commit Logs 
+![Last Commit Logs](https://github.com/AlifRisyanS/Signal-Assigment/assets/145091349/43e0ac87-ed80-4a97-baec-7f02ac871a23)
